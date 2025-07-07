@@ -91,7 +91,17 @@ rule indexing:
         """
 
 
-
+rule fasta_dict:
+    input:
+        marker = rules.create_dirs.output.marker,
+        index = rule.indexing.output.index
+    output:
+        fa_dict = {RAW_DIR}/reference.dict
+    shell:
+        """
+        echo Creating FASTA dictionary using GATK...
+        gatk CreateSequenceDictionary -R {RAW_DIR}/reference.fasta -O {RAW_DIR}/reference.dict
+        """
 
 
 
