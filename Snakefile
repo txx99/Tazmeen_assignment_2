@@ -41,7 +41,7 @@ rule download_reference:
         efetch -db nucleotide -id {REF_ID} -format fasta > {RAW_DIR}/reference.fasta
         echo Downloaded reference genome!
         """
- 
+
 rule download_sra:
     input:
         marker = rules.create_dirs.output.marker
@@ -103,6 +103,91 @@ rule fasta_dict:
         gatk CreateSequenceDictionary -R {RAW_DIR}/reference.fasta -O {RAW_DIR}/reference.dict
         """
 
+
+rule aligning:
+    input: 
+        marker = rules.create_dirs.output.marker,
+        reference_fasta = rule.download_reference.output.reference_fasta
+    output:
+        aligned_sam = {ALIGNED_DIR}/aligned.sam
+    shell:
+        """
+        echo Aligning reads with read groups...
+        bwa mem -R '@RG\tID:1\tLB:lib1\tPL:illumina\tPU:unit1\tSM:sample1' {RAW_DIR}/reference.fasta {RAW_DIR}/{SRA}.fastq > {ALIGNED_DIR}/aligned.sam
+        echo Aligned reads!
+        """
+    
+rule bam_conversion:
+    input:
+        marker = rules.create_dirs.output.marker,
+        aligned_sam = rule.aligning.output.aligned_sam
+    output:
+        bamed = {ALIGNED_DIR}/aligned.sorted.bam
+    shell:
+        """
+        echo Converting SAM to sorted BAM...
+        samtools view -b {ALIGNED_DIR}/aligned.sam | samtools sort -o {ALIGNED_DIR}/aligned.sorted.bam
+        """
+
+rule bam_validaxn:
+    input:
+        marker = rules.create_dirs.output.marker,
+        bamed = rule.bam_conversion.output.bamed
+    shell:
+        """
+        echo Validating BAM file...
+        gatk ValidateSamFile -I {ALIGNED_DIR}/aligned.sorted.bam -MODE SUMMARY
+        """
+
+rule mark_dups:
+    input:
+        marker = rules.create_dirs.output.marker,
+        bamed = rule.bam_conversion.output.bamed
+    output:
+        dedup_bam = {ALIGNED_DIR}/dedup.bam
+        dup_mets = {ALIGNED_DIR}/dup_metrics.txt
+    shell:
+        """
+        echo Marking duplicates...
+        gatk MarkDuplicates -I {ALIGNED_DIR}/aligned.sorted.bam -O {ALIGNED_DIR}/dedup.bam -M {ALIGNED_DIR}/dup_metrics.txt
+        """
+
+rule dedup_indexing:
+    input:
+        marker = rules.create_dirs.output.marker,
+        dedup_bam = rule.mark_dups.output.dedup_bam
+    shell:
+        """
+        echo Indexing deduplicated BAM file...
+        samtools index {ALIGNED_DIR}/dedup.bam
+        """
+
+rule: variant_call:
+    input: 
+        marker = rules.create_dirs.output.marker,
+        dedup_bam = rule.mark_dups.output.dedup_bam,
+        index = rule.indexing.output.index
+    ouput:
+        raw_vcf = {VARIANT_DIR}/raw_variants.vcf
+    shell:
+        """
+        echo Calling variants...
+        gatk HaplotypeCaller -R {RAW_DIR}/reference.fasta -I {ALIGNED_DIR}/dedup.bam -O {VARIANT_DIR}/raw_variants.vcf
+        echo Called variants!
+        """
+
+rule filter_variants:
+    input: 
+        marker = rules.create_dirs.output.marker,
+        index = rule.indexing.output.index
+        raw_variants = rule.variant_call.ouput.raw_vcf
+    output:
+        filtered_variants = {VARIANT_DIR}/filtered_variants.vcf
+    shell:
+        """
+        echo Filtering variants...
+        gatk VariantFiltration -R {RAW_DIR}/reference.fasta -V {VARIANT_DIR}/raw_variants.vcf -O {VARIANT_DIR}/filtered_variants.vcf --filter-expression "QD < 2.0 || FS > 60.0" --filter-name FILTER
+        """
 
 
 
