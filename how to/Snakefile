@@ -1,0 +1,30 @@
+# Snakefile how to
+# all dependencies are based on input and output file instructions 
+
+rule all:
+    input:
+        "all the files, comma",
+        "we want to create"
+
+rule first:
+    output:
+        "name of output file"
+    shell:
+        "actual script > output.txt"
+
+rule second:
+    output:
+        "name of output file to check for"
+    shell:
+        "another script > {output2}" 
+
+rule third:
+    input:
+        dependency.py
+    output:
+        "output3.fasta"
+    shell:
+        """
+        multi line
+        script 
+        """
