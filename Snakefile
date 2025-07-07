@@ -68,14 +68,34 @@ rule extract_sequence:
         """
 
 rule run_fastqc:
+    input:
+        marker = rules.create_dirs.output.marker,
+        sequence_fastq = rules.extract_sequence.output.sequence_fastq
     output:
-        fastqc = f"{QC_DIR} {RAW_DIR}/{SRA}.fastq"
+        fastqc = f"{QC_DIR}"
     shell:
         """
         echo Running FastQC on raw reads...
-        fastqc -o $QC_DIR $RAW_DIR/${SRA}.fastq 
+        fastqc -o {QC_DIR} {RAW_DIR}/{SRA}.fastq 
         """
  
+rule indexing:
+    input:
+        marker = rules.create_dirs.output.marker,
+    output:
+        index = {RAW_DIR}/reference.fasta
+    shell:
+        """
+        echo Indexing reference genome with samtools...
+        samtools faidx {RAW_DIR}/reference.fasta
+        """
+
+
+
+
+
+
+
 rule upload_s3:
     input:
         reference_fasta = rules.download_reference.output.reference_fasta,
