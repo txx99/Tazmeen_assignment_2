@@ -67,7 +67,14 @@ rule extract_sequence:
         echo Extracted sequencing data!
         """
 
-
+rule run_fastqc:
+    output:
+        fastqc = f"{QC_DIR} {RAW_DIR}/{SRA}.fastq"
+    shell:
+        """
+        echo Running FastQC on raw reads...
+        fastqc -o $QC_DIR $RAW_DIR/${SRA}.fastq 
+        """
  
 rule upload_s3:
     input:
