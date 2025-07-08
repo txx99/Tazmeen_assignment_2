@@ -1,0 +1,37 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                count
+---------------  -------
+all                    1
+filter_variants        1
+total                  2
+
+Select jobs to execute...
+
+[Tue Jul  8 07:18:38 2025]
+rule filter_variants:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/variants/raw_variants.vcf
+    output: results/variants/filtered_variants.vcf
+    jobid: 13
+    reason: Missing output files: results/variants/filtered_variants.vcf
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:18:42 2025]
+Finished job 13.
+1 of 2 steps (50%) done
+Select jobs to execute...
+
+[Tue Jul  8 07:18:42 2025]
+localrule all:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739/SRR1972739.sra, results/raw/SRR1972739.fastq, results/raw/reference.fasta, results/raw/reference.dict, results/raw/reference.fasta.fai, results/aligned/aligned.sam, results/aligned/aligned.sorted.bam, results/aligned/dedup.bam, results/aligned/dup_metrics.txt, results/aligned/dedup.bam.bai, results/variants/raw_variants.vcf, results/variants/filtered_variants.vcf
+    jobid: 0
+    reason: Input files updated by another job: results/variants/filtered_variants.vcf
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:18:42 2025]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: .snakemake/log/2025-07-08T071838.346517.snakemake.log

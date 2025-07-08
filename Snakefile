@@ -27,7 +27,8 @@ rule all:
         f"{ALIGNED_DIR}/dedup.bam",
         f"{ALIGNED_DIR}/dup_metrics.txt",
         f"{ALIGNED_DIR}/dedup.bam.bai",
-        f"{VARIANT_DIR}/raw_variants.vcf"
+        f"{VARIANT_DIR}/raw_variants.vcf",
+        f"{VARIANT_DIR}/filtered_variants.vcf"
         # f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
@@ -204,18 +205,18 @@ rule variant_cal:
         echo Called variants!
         """
 
-# rule filter_variants:
-#     input: 
-#         marker = rules.create_dirs.output.marker,
-#         reference_fasta = rules.download_reference.output.reference_fasta,
-#         raw_variants = rules.variant_cal.output.raw_vcf
-#     output:
-#         filtered_variants = f"{VARIANT_DIR}/filtered_variants.vcf"
-#     shell:
-#         """
-#         echo Filtering variants...
-#         gatk VariantFiltration -R {RAW_DIR}/reference.fasta -V {VARIANT_DIR}/raw_variants.vcf -O {VARIANT_DIR}/filtered_variants.vcf --filter-expression "QD < 2.0 || FS > 60.0" --filter-name FILTER
-#         """
+rule filter_variants:
+    input: 
+        marker = rules.create_dirs.output.marker,
+        reference_fasta = rules.download_reference.output.reference_fasta,
+        raw_variants = rules.variant_cal.output.raw_vcf
+    output:
+        filtered_variants = f"{VARIANT_DIR}/filtered_variants.vcf"
+    shell:
+        """
+        echo Filtering variants...
+        gatk VariantFiltration -R {RAW_DIR}/reference.fasta -V {VARIANT_DIR}/raw_variants.vcf -O {VARIANT_DIR}/filtered_variants.vcf --filter-expression "QD < 2.0 || FS > 60.0" --filter-name FILTER
+        """
 
 # rule snpEff_ref_download:
 #     input:
