@@ -28,7 +28,8 @@ rule all:
         f"{ALIGNED_DIR}/dup_metrics.txt",
         f"{ALIGNED_DIR}/dedup.bam.bai",
         f"{VARIANT_DIR}/raw_variants.vcf",
-        f"{VARIANT_DIR}/filtered_variants.vcf"
+        f"{VARIANT_DIR}/filtered_variants.vcf",
+        f"{SNPEFF_DATA_DIR}/genes.gbk"
         # f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
@@ -218,17 +219,17 @@ rule filter_variants:
         gatk VariantFiltration -R {RAW_DIR}/reference.fasta -V {VARIANT_DIR}/raw_variants.vcf -O {VARIANT_DIR}/filtered_variants.vcf --filter-expression "QD < 2.0 || FS > 60.0" --filter-name FILTER
         """
 
-# rule snpEff_ref_download:
-#     input:
-#         marker = rules.create_dirs.output.marker
-#     output: 
-#         genbank_ref = f"{SNPEFF_DATA_DIR}/genes.gbk"
-#     shell:
-#         """
-#         echo Downloading reference GenBank file for snpEff...
-#         efetch -db nucleotide -id {REF_ID} -format genbank > {SNPEFF_DATA_DIR}/genes.gbk
-#         echo Downloaded GenBank file for snpEff!
-#         """
+rule snpEff_ref_download:
+    input:
+        marker = rules.create_dirs.output.marker
+    output: 
+        genbank_ref = f"{SNPEFF_DATA_DIR}/genes.gbk"
+    shell:
+        """
+        echo Downloading reference GenBank file for snpEff...
+        efetch -db nucleotide -id {REF_ID} -format genbank > {SNPEFF_DATA_DIR}/genes.gbk
+        echo Downloaded GenBank file for snpEff!
+        """
 
 # rule snpEff_config:
 #     input:
