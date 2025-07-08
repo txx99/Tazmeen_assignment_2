@@ -24,6 +24,7 @@ rule all:
         f"{RAW_DIR}/reference.fasta.fai",
         f"{ALIGNED_DIR}/aligned.sam",
         f"{ALIGNED_DIR}/aligned.sorted.bam",
+        f"{ALIGNED_DIR}/.validated_bam",
         f"{ALIGNED_DIR}/dedup.bam",
         f"{ALIGNED_DIR}/dup_metrics.txt",
         f"{ALIGNED_DIR}/dedup.bam.bai",
@@ -162,10 +163,12 @@ rule bam_validaxn:
     input:
         marker = rules.create_dirs.output.marker,
         bamed = rules.bam_conversion.output.bamed
+    output:
+        valid_bam = f"{ALIGNED_DIR}/.validated_bam"
     shell:
         """
         echo Validating BAM file...
-        gatk ValidateSamFile -I {ALIGNED_DIR}/aligned.sorted.bam -MODE SUMMARY
+        gatk ValidateSamFile -I {ALIGNED_DIR}/aligned.sorted.bam -MODE SUMMARY > {ALIGNED_DIR}/.validated_bam
         """
 
 rule mark_dups:
