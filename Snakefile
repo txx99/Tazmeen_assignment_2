@@ -30,7 +30,8 @@ rule all:
         f"{VARIANT_DIR}/raw_variants.vcf",
         f"{VARIANT_DIR}/filtered_variants.vcf",
         f"{SNPEFF_DATA_DIR}/genes.gbk",
-        f"{SNPEFF_DIR}/snpEff.config"
+        f"{SNPEFF_DIR}/snpEff.config",
+        f"{SNPEFF_DATA_DIR}/snpEffectPredictor.bin"
         # f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
@@ -250,16 +251,18 @@ rule snpEff_config:
         EOF
         """
 
-# rule build_snpEff_db:
-#     input:
-#         marker = rules.create_dirs.output.marker,
-#         snpEff_config_file = rules.snpEff_config.output.snpEff_config_file 
-#     shell:
-#         """
-#         echo Building snpEff database...
-#         snpEff build -c {SNPEFF_DIR}/snpEff.config -genbank -v -noCheckProtein reference_db
-#         echo Built snpEff database!
-#         """
+rule build_snpEff_db: # builds a folder --> selecting one file as output
+    input:
+        marker = rules.create_dirs.output.marker,
+        snpEff_config_file = rules.snpEff_config.output.snpEff_config_file 
+    output:
+        snpEff_db = f"{SNPEFF_DATA_DIR}/snpEffectPredictor.bin"
+    shell:
+        """
+        echo Building snpEff database...
+        snpEff build -c {SNPEFF_DIR}/snpEff.config -genbank -v -noCheckProtein reference_db
+        echo Built snpEff database!
+        """
 
 
 
