@@ -26,7 +26,8 @@ rule all:
         f"{ALIGNED_DIR}/aligned.sorted.bam",
         f"{ALIGNED_DIR}/dedup.bam",
         f"{ALIGNED_DIR}/dup_metrics.txt",
-        f"{ALIGNED_DIR}/dedup.bam.bai"
+        f"{ALIGNED_DIR}/dedup.bam.bai",
+        f"{VARIANT_DIR}/raw_variants.vcf"
         # f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
@@ -188,20 +189,20 @@ rule dedup_indexing:
         samtools index {ALIGNED_DIR}/dedup.bam
         """
 
-# rule variant_cal:
-#     input: 
-#         marker = rules.create_dirs.output.marker,
-#         dedup_bam = rules.mark_dups.output.dedup_bam,
-#         reference_fasta = rules.download_reference.output.reference_fasta,
-#         dedup_bam_index = rules.dedup_indexing.output.dedup_bam_index
-#     output:
-#         raw_vcf = f"{VARIANT_DIR}/raw_variants.vcf"
-#     shell:
-#         """
-#         echo Calling variants...
-#         gatk HaplotypeCaller -R {RAW_DIR}/reference.fasta -I {ALIGNED_DIR}/dedup.bam -O {VARIANT_DIR}/raw_variants.vcf
-#         echo Called variants!
-#         """
+rule variant_cal:
+    input: 
+        marker = rules.create_dirs.output.marker,
+        dedup_bam = rules.mark_dups.output.dedup_bam,
+        reference_fasta = rules.download_reference.output.reference_fasta,
+        dedup_bam_index = rules.dedup_indexing.output.dedup_bam_index
+    output:
+        raw_vcf = f"{VARIANT_DIR}/raw_variants.vcf"
+    shell:
+        """
+        echo Calling variants...
+        gatk HaplotypeCaller -R {RAW_DIR}/reference.fasta -I {ALIGNED_DIR}/dedup.bam -O {VARIANT_DIR}/raw_variants.vcf
+        echo Called variants!
+        """
 
 # rule filter_variants:
 #     input: 
