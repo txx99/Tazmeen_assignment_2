@@ -1,0 +1,2 @@
+SyntaxError in file /home/ubuntu/Tazmeen_assignment_2/Snakefile, line 165:
+Unexpected keyword variant_call in rule definition (Snakefile, line 165)

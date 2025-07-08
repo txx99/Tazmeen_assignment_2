@@ -1,0 +1,3 @@
+NameError in file /home/ubuntu/Tazmeen_assignment_2/Snakefile, line 111:
+name 'rule' is not defined
+  File "/home/ubuntu/Tazmeen_assignment_2/Snakefile", line 111, in <module>

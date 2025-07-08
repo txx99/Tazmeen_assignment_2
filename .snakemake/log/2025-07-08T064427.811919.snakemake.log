@@ -1,0 +1,120 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                   count
+------------------  -------
+aligning                  1
+all                       1
+create_dirs               1
+download_reference        1
+download_sra              1
+extract_sequence          1
+fasta_dict                1
+indexing                  1
+total                     8
+
+Select jobs to execute...
+
+[Tue Jul  8 06:44:28 2025]
+rule create_dirs:
+    output: results/snakemake/.dirs_created
+    jobid: 1
+    reason: Missing output files: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:28 2025]
+Finished job 1.
+1 of 8 steps (12%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:28 2025]
+rule download_sra:
+    input: results/snakemake/.dirs_created
+    output: results/raw/SRR1972739/SRR1972739.sra
+    jobid: 3
+    reason: Missing output files: results/raw/SRR1972739/SRR1972739.sra; Input files updated by another job: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:30 2025]
+Finished job 3.
+2 of 8 steps (25%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:30 2025]
+rule extract_sequence:
+    input: results/snakemake/.dirs_created, results/raw/SRR1972739/SRR1972739.sra
+    output: results/raw/SRR1972739.fastq
+    jobid: 4
+    reason: Missing output files: results/raw/SRR1972739.fastq; Input files updated by another job: results/snakemake/.dirs_created, results/raw/SRR1972739/SRR1972739.sra
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:30 2025]
+Finished job 4.
+3 of 8 steps (38%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:30 2025]
+rule download_reference:
+    input: results/snakemake/.dirs_created
+    output: results/raw/reference.fasta
+    jobid: 2
+    reason: Missing output files: results/raw/reference.fasta; Input files updated by another job: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:31 2025]
+Finished job 2.
+4 of 8 steps (50%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:31 2025]
+rule indexing:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta
+    output: results/raw/reference.fasta.fai
+    jobid: 6
+    reason: Missing output files: results/raw/reference.fasta.fai; Input files updated by another job: results/snakemake/.dirs_created, results/raw/reference.fasta
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:31 2025]
+Finished job 6.
+5 of 8 steps (62%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:31 2025]
+rule fasta_dict:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/reference.fasta.fai
+    output: results/raw/reference.dict
+    jobid: 5
+    reason: Missing output files: results/raw/reference.dict; Input files updated by another job: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/reference.fasta.fai
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:33 2025]
+Finished job 5.
+6 of 8 steps (75%) done
+Select jobs to execute...
+
+[Tue Jul  8 06:44:33 2025]
+rule aligning:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739.fastq
+    output: results/aligned/aligned.sam
+    jobid: 7
+    reason: Missing output files: results/aligned/aligned.sam; Input files updated by another job: results/snakemake/.dirs_created, results/raw/SRR1972739.fastq, results/raw/reference.fasta
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 06:44:33 2025]
+Error in rule aligning:
+    jobid: 7
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739.fastq
+    output: results/aligned/aligned.sam
+    shell:
+        
+        echo Aligning reads with read groups...
+        bwa mem -R '@RG	ID:1	LB:lib1	PL:illumina	PU:unit1	SM:sample1' $RAW_DIR/reference.fasta $RAW_DIR/$SRR1972739.fastq > $ALIGNED_DIR/aligned.sam
+        echo Aligned reads!
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2025-07-08T064427.811919.snakemake.log

@@ -1,0 +1,79 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                   count
+------------------  -------
+all                       1
+create_dirs               1
+download_reference        1
+download_sra              1
+extract_sequence          1
+upload_s3                 1
+total                     6
+
+Select jobs to execute...
+
+[Tue Jul  8 00:11:34 2025]
+rule create_dirs:
+    output: results/snakemake/.dirs_created
+    jobid: 1
+    reason: Missing output files: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 00:11:34 2025]
+Finished job 1.
+1 of 6 steps (17%) done
+Select jobs to execute...
+
+[Tue Jul  8 00:11:35 2025]
+rule download_sra:
+    input: results/snakemake/.dirs_created
+    output: results/raw/SRR1972739/SRR1972739.sra
+    jobid: 3
+    reason: Missing output files: results/raw/SRR1972739/SRR1972739.sra; Input files updated by another job: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 00:11:37 2025]
+Finished job 3.
+2 of 6 steps (33%) done
+Select jobs to execute...
+
+[Tue Jul  8 00:11:37 2025]
+rule extract_sequence:
+    input: results/snakemake/.dirs_created, results/raw/SRR1972739/SRR1972739.sra
+    output: results/raw/SRR1972739.fastq
+    jobid: 4
+    reason: Missing output files: results/raw/SRR1972739.fastq; Input files updated by another job: results/snakemake/.dirs_created, results/raw/SRR1972739/SRR1972739.sra
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 00:11:38 2025]
+Finished job 4.
+3 of 6 steps (50%) done
+Select jobs to execute...
+
+[Tue Jul  8 00:11:38 2025]
+rule download_reference:
+    input: results/snakemake/.dirs_created
+    output: results/raw/reference.fasta
+    jobid: 2
+    reason: Missing output files: results/raw/reference.fasta; Input files updated by another job: results/snakemake/.dirs_created
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 00:11:39 2025]
+Finished job 2.
+4 of 6 steps (67%) done
+Select jobs to execute...
+
+[Tue Jul  8 00:11:39 2025]
+rule upload_s3:
+    input: results/raw/reference.fasta, results/raw/SRR1972739/SRR1972739.sra, results/raw/SRR1972739.fastq
+    output: results/snakemake/.s3_upload_done
+    jobid: 5
+    reason: Missing output files: results/snakemake/.s3_upload_done; Input files updated by another job: results/raw/SRR1972739.fastq, results/raw/SRR1972739/SRR1972739.sra, results/raw/reference.fasta
+    resources: tmpdir=/tmp
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2025-07-08T001134.304585.snakemake.log

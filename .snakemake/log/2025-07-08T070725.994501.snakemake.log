@@ -1,0 +1,37 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job          count
+---------  -------
+all              1
+mark_dups        1
+total            2
+
+Select jobs to execute...
+
+[Tue Jul  8 07:07:26 2025]
+rule mark_dups:
+    input: results/snakemake/.dirs_created, results/aligned/aligned.sorted.bam
+    output: results/aligned/dedup.bam, results/aligned/dup_metrics.txt
+    jobid: 10
+    reason: Missing output files: results/aligned/dup_metrics.txt, results/aligned/dedup.bam
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:07:30 2025]
+Finished job 10.
+1 of 2 steps (50%) done
+Select jobs to execute...
+
+[Tue Jul  8 07:07:30 2025]
+localrule all:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739/SRR1972739.sra, results/raw/SRR1972739.fastq, results/raw/reference.fasta, results/raw/reference.dict, results/raw/reference.fasta.fai, results/aligned/aligned.sam, results/aligned/aligned.sorted.bam, results/aligned/dedup.bam, results/aligned/dup_metrics.txt
+    jobid: 0
+    reason: Input files updated by another job: results/aligned/dup_metrics.txt, results/aligned/dedup.bam
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:07:30 2025]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: .snakemake/log/2025-07-08T070725.994501.snakemake.log

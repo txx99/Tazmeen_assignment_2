@@ -1,0 +1,13 @@
+Building DAG of jobs...
+AmbiguousRuleException:
+Rules indexing and download_reference are ambiguous for the file results/raw/reference.fasta.
+Consider starting rule output with a unique prefix, constrain your wildcards, or use the ruleorder directive.
+Wildcards:
+	indexing: 
+	download_reference: 
+Expected input files:
+	indexing: results/snakemake/.dirs_created
+	download_reference: results/snakemake/.dirs_created
+Expected output files:
+	indexing: results/raw/reference.fasta
+	download_reference: results/raw/reference.fasta

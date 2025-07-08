@@ -1,0 +1,5 @@
+Building DAG of jobs...
+MissingInputException in rule all in file /home/ubuntu/Tazmeen_assignment_2/Snakefile, line 16:
+Missing input files for rule all:
+    affected files:
+        results/raw/reference.fastaresults/raw/reference.dict

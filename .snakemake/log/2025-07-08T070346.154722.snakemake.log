@@ -1,0 +1,51 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job          count
+---------  -------
+aligning         1
+all              1
+bwa_index        1
+total            3
+
+Select jobs to execute...
+
+[Tue Jul  8 07:03:46 2025]
+rule bwa_index:
+    input: results/raw/reference.fasta
+    output: results/raw/reference.fasta.bwt
+    jobid: 8
+    reason: Missing output files: results/raw/reference.fasta.bwt
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:03:46 2025]
+Finished job 8.
+1 of 3 steps (33%) done
+Select jobs to execute...
+
+[Tue Jul  8 07:03:46 2025]
+rule aligning:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739.fastq, results/raw/reference.fasta.bwt, results/raw/reference.fasta.fai
+    output: results/aligned/aligned.sam
+    jobid: 7
+    reason: Missing output files: results/aligned/aligned.sam; Input files updated by another job: results/raw/reference.fasta.bwt
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:03:48 2025]
+Finished job 7.
+2 of 3 steps (67%) done
+Select jobs to execute...
+
+[Tue Jul  8 07:03:48 2025]
+localrule all:
+    input: results/snakemake/.dirs_created, results/raw/reference.fasta, results/raw/SRR1972739/SRR1972739.sra, results/raw/SRR1972739.fastq, results/raw/reference.fasta, results/raw/reference.dict, results/raw/reference.fasta.fai, results/aligned/aligned.sam
+    jobid: 0
+    reason: Input files updated by another job: results/aligned/aligned.sam
+    resources: tmpdir=/tmp
+
+[Tue Jul  8 07:03:48 2025]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: .snakemake/log/2025-07-08T070346.154722.snakemake.log
