@@ -201,6 +201,23 @@ rule snpEff_ref_download:
         echo Downloaded GenBank file for snpEff!
         """
 
+rule snpEff_config:
+    input:
+        marker = rules.create_dirs.output.marker,
+        index = rule.indexing.output.index
+        genbank_ref = rule.snpEff_ref_download.output.genbank_ref
+    output:
+        snpEff_config_file = {SNPEFF_DIR}/snpEff.config
+    shell:
+        """
+        echo Creating custom snpEff configuration file...
+        cat <<EOF > {SNPEFF_DIR}/snpEff.config
+        # Custom snpEff config for reference_db
+        reference_db.genome : reference_db
+        reference_db.fa : $(readlink -f {RAW_DIR}/reference.fasta)
+        reference_db.genbank : $(readlink -f {SNPEFF_DATA_DIR}/genes.gbk)
+        EOF
+        """
 
 
 rule upload_s3:
