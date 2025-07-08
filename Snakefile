@@ -29,7 +29,8 @@ rule all:
         f"{ALIGNED_DIR}/dedup.bam.bai",
         f"{VARIANT_DIR}/raw_variants.vcf",
         f"{VARIANT_DIR}/filtered_variants.vcf",
-        f"{SNPEFF_DATA_DIR}/genes.gbk"
+        f"{SNPEFF_DATA_DIR}/genes.gbk",
+        f"{SNPEFF_DIR}/snpEff.config"
         # f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
@@ -231,23 +232,23 @@ rule snpEff_ref_download:
         echo Downloaded GenBank file for snpEff!
         """
 
-# rule snpEff_config:
-#     input:
-#         marker = rules.create_dirs.output.marker,
-#         reference_fasta = rules.download_reference.output.reference_fasta,
-#         genbank_ref = rules.snpEff_ref_download.output.genbank_ref
-#     output:
-#         snpEff_config_file = f"{SNPEFF_DIR}/snpEff.config"
-#     shell:
-#         """
-#         echo Creating custom snpEff configuration file...
-#         cat <<EOF > {SNPEFF_DIR}/snpEff.config
-#         # Custom snpEff config for reference_db
-#         reference_db.genome : reference_db
-#         reference_db.fa : $(readlink -f {RAW_DIR}/reference.fasta)
-#         reference_db.genbank : $(readlink -f {SNPEFF_DATA_DIR}/genes.gbk)
-#         EOF
-#         """
+rule snpEff_config:
+    input:
+        marker = rules.create_dirs.output.marker,
+        reference_fasta = rules.download_reference.output.reference_fasta,
+        genbank_ref = rules.snpEff_ref_download.output.genbank_ref
+    output:
+        snpEff_config_file = f"{SNPEFF_DIR}/snpEff.config"
+    shell:
+        """
+        echo Creating custom snpEff configuration file...
+        cat <<EOF > {SNPEFF_DIR}/snpEff.config
+        # Custom snpEff config for reference_db
+        reference_db.genome : reference_db
+        reference_db.fa : $(readlink -f {RAW_DIR}/reference.fasta)
+        reference_db.genbank : $(readlink -f {SNPEFF_DATA_DIR}/genes.gbk)
+        EOF
+        """
 
 # rule build_snpEff_db:
 #     input:
