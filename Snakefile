@@ -10,7 +10,7 @@ QC_DIR=f"{RESULTS_FOLDER}/qc"
 SNPEFF_DIR=f"{RESULTS_FOLDER}/snpEff"
 SNPEFF_DATA_DIR=f"{SNPEFF_DIR}/data/reference_db"
 SNAKEMAKE_DIR=f"{RESULTS_FOLDER}/snakemake"
-BUCKET="sohail-binf5506"
+BUCKET="tazmeen-assignment-2"
 S3_PREFIX="ebola"
  
 rule all:
@@ -32,8 +32,8 @@ rule all:
         f"{VARIANT_DIR}/filtered_variants.vcf",
         f"{SNPEFF_DATA_DIR}/genes.gbk",
         f"{SNPEFF_DIR}/snpEff.config",
-        f"{SNPEFF_DATA_DIR}/snpEffectPredictor.bin"
-        # f"{SNAKEMAKE_DIR}/.s3_upload_done"
+        f"{SNPEFF_DATA_DIR}/snpEffectPredictor.bin",
+        f"{SNAKEMAKE_DIR}/.s3_upload_done"
  
 rule create_dirs:
     output:
@@ -267,28 +267,26 @@ rule build_snpEff_db: # builds a folder --> selecting one file as output
         echo Built snpEff database!
         """
 
-
-
-# # rule upload_s3:
-# #     input:
-# #         reference_fasta = rules.download_reference.output.reference_fasta,
-# #         sequence_sra = rules.download_sra.output.sequence_sra,
-# #         sequence_fastq = rules.extract_sequence.output.sequence_fastq
-# #     output:
-# #         marker = f"{SNAKEMAKE_DIR}/.s3_upload_done"
-# #     run:
-# #         import os
-# #         import boto3
-# #         s3 = boto3.client("s3")
+rule upload_s3:
+    input:
+        reference_fasta = rules.download_reference.output.reference_fasta,
+        sequence_sra = rules.download_sra.output.sequence_sra,
+        sequence_fastq = rules.extract_sequence.output.sequence_fastq
+    output:
+        marker = f"{SNAKEMAKE_DIR}/.s3_upload_done"
+    run:
+        import os
+        import boto3
+        s3 = boto3.client("s3")
  
-# #         for root, dirs, files in os.walk(RESULTS_FOLDER):
-# #             for file in files:
-# #                 local_file = os.path.join(root, file)
-# #                 relative_path = os.path.relpath(local_file, RESULTS_FOLDER)
-# #                 s3_key = os.path.join(S3_PREFIX, relative_path).replace("\\", "/")
+        for root, dirs, files in os.walk(RESULTS_FOLDER):
+            for file in files:
+                local_file = os.path.join(root, file)
+                relative_path = os.path.relpath(local_file, RESULTS_FOLDER)
+                s3_key = os.path.join(S3_PREFIX, relative_path).replace("\\", "/")
  
-# #                 print(f"Uploading {local_file} to s3://{BUCKET}/{s3_key}")
-# #                 s3.upload_file(local_file, BUCKET, s3_key)
+                print(f"Uploading {local_file} to s3://{BUCKET}/{s3_key}")
+                s3.upload_file(local_file, BUCKET, s3_key)
  
-# #         with open(output.marker, "w") as f:
-# #             f.write("Upload Complete!")
+        with open(output.marker, "w") as f:
+            f.write("Upload Complete!")
